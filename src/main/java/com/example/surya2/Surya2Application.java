@@ -12,8 +12,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.web.client.RestOperations;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
+
+import static com.example.surya2.Utils.createStoreListCsv;
 
 @SpringBootApplication
 public class Surya2Application {
@@ -68,17 +71,28 @@ public class Surya2Application {
 
 
 			// read input file and loop thru it
-			String inputFile = "C:\\util\\myNotes\\googleMaps\\addr1.csv";
+			String inputFile = "C:\\util\\myNotes\\googleMaps\\addr2.csv";
 			List<String> addressList = Utils.getAddressList(inputFile);
 			GISFactory myGISFactory = GISFactory.getInstance();
 			GeocodeService geocodeServiceMQ =  myGISFactory.getGeocodeService();
 			SearchService searchServiceMQ = myGISFactory.getSearchService();
+			List<String> storeListOutput = new ArrayList<String>();
+			int cnt = 0;
+
 
 			for ( String address : addressList) {
 				AnalysisTaskCallable atc = new AnalysisTaskCallable(address, geocodeServiceMQ, searchServiceMQ, restTemplate);
 				AnalysisResult ar = atc.call();
-				int x = 1;
+				if ( ar.getInputStoreId().equalsIgnoreCase(ar.getStoreIdGM()) ||
+                        ar.getFoundInGM().equalsIgnoreCase("Found in GM")) {
+					// do nothing
+				} else {
+					storeListOutput.add(ar.getInputStoreId());
+				}
+				cnt++;
 			}
+
+			createStoreListCsv( storeListOutput );
 
 			LOGGER.info("finished");
 

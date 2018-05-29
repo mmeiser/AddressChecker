@@ -31,11 +31,11 @@ public class AnalysisTaskCallable implements Callable<AnalysisResult> {
         String latLngMQ = "NotFound";
         String latLngGM = "NotFound";
         String storeIdFromMSA = "Not in GM";
+        String inputStoreId = "";
 
-
+        /*
         try {
-
-            // cal Mapquests service
+            // call Mapquests service
             GeocodeResponse geocodeResponseMQ = MQService.getGeoCodeResponse(address, geocodeServiceMQ);
             if ("OK".equalsIgnoreCase(geocodeResponseMQ.getCode().name())) {
                 String latMQ = ((Double) geocodeResponseMQ.getGeocodeResults().get(0).getLatLng().getLatitude()).toString();
@@ -55,6 +55,7 @@ public class AnalysisTaskCallable implements Callable<AnalysisResult> {
             storeIdForMQ = "Error";
             latLngMQ = "Error";
         }
+        */
 
         //Call Google's MSA webbff getStoreDetails
         try {
@@ -65,6 +66,13 @@ public class AnalysisTaskCallable implements Callable<AnalysisResult> {
                     storeIdFromMSA = "Not in TA database";
                 }
             }
+
+            try {
+                inputStoreId = msaResponse.getCustomerAddress().getAddress().getDeliveryStoreId();
+            } catch ( Exception e ) {
+                inputStoreId = "";
+            }
+
             if (msaResponse.getDeliveryStores() != null && !msaResponse.getDeliveryStores().isEmpty()) {
                 storeIdFromMSA = ((Long) msaResponse.getDeliveryStores().get(0).getStoreId()).toString();
             }
@@ -79,6 +87,7 @@ public class AnalysisTaskCallable implements Callable<AnalysisResult> {
         analysisResult.setStoreIdMQ(storeIdForMQ);
         analysisResult.setStoreIdGM(storeIdFromMSA);
         analysisResult.setStoreMatch(storeIdForMQ.equalsIgnoreCase(storeIdFromMSA) ? "Store match" : "Different store");
+        analysisResult.setInputStoreId(inputStoreId);
         return analysisResult;
       
     }

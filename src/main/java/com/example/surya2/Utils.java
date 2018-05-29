@@ -85,6 +85,16 @@ public class Utils {
         csvPrinter.flush();
     }
 
+    public static void createStoreListCsv(List<String> storeList ) throws Exception {
+           String outputFile = "C:\\util\\myNotes\\googleMaps\\storesToAddToAux.csv";
+           BufferedWriter writer = Files.newBufferedWriter(Paths.get(outputFile));
+           CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader("StoreId" ));
 
+
+           for (String str : storeList) {
+               csvPrinter.printRecord(str);
+           }
+           csvPrinter.flush();
+       }
 }
 

@@ -21,7 +21,8 @@ public class WebBffService {
         String postal = addressArray[1];
         String country = addressArray[2];
         String city = addressArray[3];
-        String territoryId = addressArray[4];   
+        String territoryId = addressArray[4];
+        String storeId =   addressArray[5];
 
         AddressDetailForSearchRequest request = new AddressDetailForSearchRequest();
         AddressInfoForSearch customerAddress = new AddressInfoForSearch();
@@ -34,6 +35,8 @@ public class WebBffService {
         searchedAddress.setPostalCode(postal);
         searchedAddress.setTerritoryId(Integer.parseInt(territoryId));
         searchedAddress.setStreetSideId(0);
+        searchedAddress.setDeliveryStoreId(storeId);
+
 
         customerAddress.setAddress(searchedAddress);
         request.setRadius(50);
@@ -53,7 +56,7 @@ public class WebBffService {
 
         ResponseEntity<StoreSearchResponseForMapping> response = restTemplate.postForEntity(mappingUrl, entity, StoreSearchResponseForMapping.class);
         resp = response.getBody();
-
+        resp.getCustomerAddress().getAddress().setDeliveryStoreId(storeId);
 
         return resp;
     }

@@ -11,6 +11,7 @@ public class AnalysisResult {
     private String storeIdMQ;
     private String storeIdGM;
     private String storeMatch;
+    private String inputStoreId;
 
 
     public String getAddress() {
@@ -68,4 +69,12 @@ public class AnalysisResult {
     public void setStoreMatch(String storeMatch) {
         this.storeMatch = storeMatch;
     }
+
+    public String getInputStoreId() {
+            return inputStoreId;
+        }
+
+    public void setInputStoreId(String id) {
+            this.inputStoreId = id;
+        }
 }

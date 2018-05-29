@@ -25,6 +25,7 @@ public class AddressForSearch {
     private String postDirectional;
     private String predirectional;
     private String highNumber;
+    private String deliveryStoreId;
 
     public String getAddress1() {
         return address1;
@@ -209,6 +210,15 @@ public class AddressForSearch {
     public void setHighNumber(String highNumber) {
         this.highNumber = highNumber;
     }
+
+    public String getDeliveryStoreId() {
+         return deliveryStoreId;
+     }
+
+     public void setDeliveryStoreId(String id) {
+         this.deliveryStoreId = id;
+     }
+
 
     @Override
     public String toString() {
