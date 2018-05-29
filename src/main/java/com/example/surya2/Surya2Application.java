@@ -12,8 +12,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.web.client.RestOperations;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.List;
+import java.util.logging.Logger;
+
 @SpringBootApplication
 public class Surya2Application {
+	private static Logger LOGGER = Logger.getLogger("");
+
 
 	public static void main(String[] args) {
 		SpringApplication.run(Surya2Application.class, args);
@@ -31,6 +36,22 @@ public class Surya2Application {
 	public CommandLineRunner run(RestTemplate restTemplate) throws Exception {
 		return args -> {
 
+			/*  1. run this query
+			select unique address1  ||  '|' || postal_code  ||  '|' || country ||   '|'  || city ||   '|'  || territory_id as address
+			from pjus.order_header
+			where order_type_code = 'D'
+			and order_status_id = 2
+			and ((store_id in ( 3615,55,275 ))  or  (postal_code in (  '65301', '40475', '40324' ) ))
+			and trunc(business_date)  > '28-Feb-2018'     */
+
+			//  2. export dataset .    delimited text  .  pipe delimeted...
+
+			// 3. open it - remove header line
+
+			// 4. make sure it is just 1 column ( view it in excel...  )
+
+			// 5. manually replace any commas with a space and re-save  ... with notepad
+
 
 		    // address for this app need to be formatted as follows:
             //      a single string with pipe separators    14210 Plymouth Ave|55337|USA|Burnsville|24
@@ -43,16 +64,25 @@ public class Surya2Application {
 
 			//String address= 14210 Plymouth Ave|55337|USA|Burnsville|24
 			//String address = "1605 County Road 42 West|55306|USA|Burnsville|24";
-			String address = "4345 Kit Carson Dr|40475|USA|Richmond|18";
-			GISFactory myGISFactory = GISFactory.getInstance();
+			//String address = "4345 Kit Carson Dr|40475|USA|Richmond|18";
 
+
+			// read input file and loop thru it
+			String inputFile = "C:\\util\\myNotes\\googleMaps\\addr1.csv";
+			List<String> addressList = Utils.getAddressList(inputFile);
+			GISFactory myGISFactory = GISFactory.getInstance();
 			GeocodeService geocodeServiceMQ =  myGISFactory.getGeocodeService();
 			SearchService searchServiceMQ = myGISFactory.getSearchService();
 
-			AnalysisTaskCallable atc = new AnalysisTaskCallable(address,geocodeServiceMQ, searchServiceMQ, restTemplate );
-			AnalysisResult ar = atc.call();
+			for ( String address : addressList) {
+				AnalysisTaskCallable atc = new AnalysisTaskCallable(address, geocodeServiceMQ, searchServiceMQ, restTemplate);
+				AnalysisResult ar = atc.call();
+				int x = 1;
+			}
 
+			LOGGER.info("finished");
 
+			int x = 1;
 
 
 		};
