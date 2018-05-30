@@ -12,16 +12,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestOperations;
 import org.springframework.web.client.RestTemplate;
-
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.logging.Logger;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import static com.example.surya2.Utils.createStoreListCsv;
 
 /*
@@ -30,7 +28,7 @@ import static com.example.surya2.Utils.createStoreListCsv;
  */
 @SpringBootApplication
 public class AddressCheckerApplication {
-	private static Logger LOGGER = Logger.getLogger("");
+	private static Logger LOGGER = LoggerFactory.getLogger(AddressCheckerApplication.class);
 	String inputFile = "C:\\util\\myNotes\\googleMaps\\addr2.csv";
     String outputFile = "C:\\util\\myNotes\\googleMaps\\storeDiff.csv";
     String outputFile2 = "C:\\util\\myNotes\\googleMaps\\googleNotFound.csv";
@@ -93,10 +91,12 @@ public class AddressCheckerApplication {
 			
 
 			// read input file and loop thru it
+            int matchCnt=0;
+            Date startDate = new Date();
+            LOGGER.error("Start Time " + startDate);
 			List<String> addressList = Utils.getAddressList(inputFile);
 			List<String> storeDiffOutputList = new ArrayList<String>();
 			List<String> googleNotFoundOutputList = new ArrayList<String>();
-			int matchCnt=0;
             ExecutorService executor = Executors.newFixedThreadPool(THREAD_COUNT);
             ((SimpleClientHttpRequestFactory) restTemplate.getRequestFactory()).setReadTimeout(20000);
             ((SimpleClientHttpRequestFactory) restTemplate.getRequestFactory()).setConnectTimeout(20000);
@@ -126,10 +126,13 @@ public class AddressCheckerApplication {
             // this writes list of storeIds  that don't match or didn't geocode to output file
             createStoreListCsv( storeDiffOutputList , outputFile);
 			createStoreListCsv( googleNotFoundOutputList, outputFile2 );
-			LOGGER.info("finished");
 
 			// shut it down at it's convenience
             executor.shutdown();
+
+            // time
+            Date endDate = new Date();
+            LOGGER.error("End Time " + endDate);
 
 		};
 	}

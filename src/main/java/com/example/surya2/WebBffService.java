@@ -6,15 +6,18 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 import sun.misc.BASE64Encoder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by Surya_Bera on 5/18/2018.
  */
 public class WebBffService {
 
-    final static String authString = "online" + ":" + "c1529e56-0b47-4ca2-bf4c-5b5ebac0164f";
-    final static String mappingUrl = "https://mapping-dev1.papajohns.com/webbff/api/v2/getStoreDetails";
-    //final static String prod_authString = "online" + ":" + "d424b999-c926-4af0-bd38-27f2faa3ecc9";
+    private static Logger LOGGER = LoggerFactory.getLogger(AddressCheckerApplication.class);
+    final static String authString = "online" + ":" + "c1529e56-0b47-4ca2-bf4c-5b5ebac0164f";                 // dev1
+    final static String mappingUrl = "https://mapping-dev1.papajohns.com/webbff/api/v2/getStoreDetails";      // dev1
+    //final static String prod_authString = "online" + ":" + "dontsaveprodautcode";
     //final static String prod_mappingUrl = "https://mapping.papajohns.com/webbff/api/v2/getStoreDetails";
 
 
@@ -57,6 +60,7 @@ public class WebBffService {
         ResponseEntity<StoreSearchResponseForMapping> response = restTemplate.postForEntity(mappingUrl, entity, StoreSearchResponseForMapping.class);
         resp = response.getBody();
         resp.getCustomerAddress().getAddress().setDeliveryStoreId(storeId);
+        LOGGER.info("[getStoreIdFromMSA] address = "  + address + " quality_code = " + response.getBody().getCustomerAddress().getQualityCode() + " response = " + response.getStatusCode());
 
         return resp;
     }
