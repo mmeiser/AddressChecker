@@ -19,12 +19,14 @@ import java.util.logging.Logger;
 import static com.example.surya2.Utils.createStoreListCsv;
 
 @SpringBootApplication
-public class Surya2Application {
+public class AddressCheckerApplication {
 	private static Logger LOGGER = Logger.getLogger("");
+	String inputFile = "C:\\util\\myNotes\\googleMaps\\addr2.csv";
+
 
 
 	public static void main(String[] args) {
-		SpringApplication.run(Surya2Application.class, args);
+		SpringApplication.run(AddressCheckerApplication.class, args);
 	}
 
 	@Bean
@@ -71,12 +73,11 @@ public class Surya2Application {
 
 
 			// read input file and loop thru it
-			String inputFile = "C:\\util\\myNotes\\googleMaps\\addr2.csv";
 			List<String> addressList = Utils.getAddressList(inputFile);
 			GISFactory myGISFactory = GISFactory.getInstance();
 			GeocodeService geocodeServiceMQ =  myGISFactory.getGeocodeService();
 			SearchService searchServiceMQ = myGISFactory.getSearchService();
-			List<String> storeListOutput = new ArrayList<String>();
+			List<String> addressListOutput = new ArrayList<String>();
 			int cnt = 0;
 
 
@@ -87,16 +88,17 @@ public class Surya2Application {
                         ar.getFoundInGM().equalsIgnoreCase("Found in GM")) {
 					// do nothing
 				} else {
-					storeListOutput.add(ar.getInputStoreId());
+					addressListOutput.add(address);
 				}
 				cnt++;
 			}
 
-			createStoreListCsv( storeListOutput );
+			
 
+            // this writes list of storeIds  that don't match or didn't geocode to output file
+            createStoreListCsv( addressListOutput );
 			LOGGER.info("finished");
 
-			int x = 1;
 
 
 		};

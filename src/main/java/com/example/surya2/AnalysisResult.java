@@ -11,7 +11,7 @@ public class AnalysisResult {
     private String storeIdMQ;
     private String storeIdGM;
     private String storeMatch;
-    private String inputStoreId;
+   private String inputStoreId;
 
 
     public String getAddress() {

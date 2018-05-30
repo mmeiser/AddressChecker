@@ -12,7 +12,8 @@ import sun.misc.BASE64Encoder;
  */
 public class WebBffService {
 
-    final static String myApiKey = "AIzaSyDm-OyrYBr-u7WsnXjk4FoFdckq-gqkqY0";
+    final static String authString = "online" + ":" + "c1529e56-0b47-4ca2-bf4c-5b5ebac0164f";
+    final static String mappingUrl = "https://mapping-dev1.papajohns.com/webbff/api/v2/getStoreDetails";
 
 
     public static StoreSearchResponseForMapping getStoreIdFromMSA(String address, RestTemplate restTemplate) throws Exception {
@@ -46,12 +47,9 @@ public class WebBffService {
         StoreSearchResponseForMapping resp = null;
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        String authString = "online" + ":" + "c1529e56-0b47-4ca2-bf4c-5b5ebac0164f";
         String authEncodedString = new BASE64Encoder().encode(authString.getBytes());
         headers.add("Authorization", "Basic " + authEncodedString);
         HttpEntity<AddressDetailForSearchRequest> entity = new HttpEntity<AddressDetailForSearchRequest>(request, headers);
-        String mappingUrl = "https://mapping-dev1.papajohns.com/webbff/api/v2/getStoreDetails";
-        //String mappingUrl = "https://maps.googleapis.com/maps/api/geocode/json?address=Winnetka@key=" + myApiKey;
 
 
         ResponseEntity<StoreSearchResponseForMapping> response = restTemplate.postForEntity(mappingUrl, entity, StoreSearchResponseForMapping.class);
