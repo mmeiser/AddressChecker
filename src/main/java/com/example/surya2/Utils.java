@@ -28,7 +28,6 @@ import java.util.Map;
  */
 public class Utils {
     private static final String[] FILE_HEADER_MAPPING = {"Address"};
-    final static String outputFile = "C:\\util\\myNotes\\googleMaps\\storesToAddToAux.csv";
 
 
     public static List<String> getAddressList(String fileName) throws Exception {
@@ -86,7 +85,7 @@ public class Utils {
         csvPrinter.flush();
     }
 
-    public static void createStoreListCsv(List<String> storeList ) throws Exception {
+    public static void createStoreListCsv(List<String> storeList, String outputFile ) throws Exception {
            BufferedWriter writer = Files.newBufferedWriter(Paths.get(outputFile));
            CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader("StoreId" ));
 
