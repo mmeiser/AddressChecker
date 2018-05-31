@@ -86,11 +86,20 @@ public class AnalysisTaskCallable implements Callable<AnalysisResult> {
         } catch (Exception ex) {
             storeIdFromMSA = "Error";
             latLngGM = "Error";
+            if ( addressLoggingFlag ) {
+                LOGGER.info("[getStoreIdFromMSA] address = " + address + " failed - Not found in GM" );
+            }
+
         }
         analysisResult.setAddress(address);
         analysisResult.setLatLngMQ(latLngMQ);
         analysisResult.setLatLngGM(latLngGM);
-        analysisResult.setFoundInGM("NotFound".equalsIgnoreCase(latLngGM) ? "Not found in GM" : "Found in GM");
+        //analysisResult.setFoundInGM("NotFound".equalsIgnoreCase(latLngGM) ? "Not found in GM" : "Found in GM");
+        if ( latLngGM.equalsIgnoreCase("NotFound") || latLngGM.equalsIgnoreCase("Error")) {
+            analysisResult.setFoundInGM("Not found in GM");
+        }  else {
+            analysisResult.setFoundInGM("Found in GM");
+        }
         analysisResult.setStoreIdMQ(storeIdForMQ);
         analysisResult.setStoreIdGM(storeIdFromMSA);
         analysisResult.setStoreMatch(storeIdForMQ.equalsIgnoreCase(storeIdFromMSA) ? "Store match" : "Different store");

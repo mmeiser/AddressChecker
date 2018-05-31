@@ -47,7 +47,6 @@ public class WebBffService {
         request.setSearchType("DELIVERY");
         request.setCustomerAddress(customerAddress);
 
-        StoreSearchResponseForMapping resp = null;
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         String authEncodedString = new BASE64Encoder().encode(authString.getBytes());
@@ -56,6 +55,7 @@ public class WebBffService {
 
 
         ResponseEntity<StoreSearchResponseForMapping> response = restTemplate.postForEntity(mappingUrl, entity, StoreSearchResponseForMapping.class);
+        StoreSearchResponseForMapping resp = null;
         resp = response.getBody();
         resp.getCustomerAddress().getAddress().setDeliveryStoreId(storeId);
         if ( isAddressLoggingOn ) {

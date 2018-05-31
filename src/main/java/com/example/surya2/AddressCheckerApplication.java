@@ -139,9 +139,13 @@ public class AddressCheckerApplication {
               for (Future<AnalysisResult> future : futureList) {
                   AnalysisResult ar = future.get();
                   if ( ar.getFoundInGM().equalsIgnoreCase("Not found in GM") ) {
-                        googleNotFoundOutputList.add(ar.getAddress() + " not found in Google" );
+                        googleNotFoundOutputList.add(ar.getAddress() + " | not found in Google" );
                     } else if (  !ar.getInputStoreId().equalsIgnoreCase(ar.getStoreIdGM() ) ) {
-                        storeDiffOutputList.add(ar.getAddress() + " : " + ar.getStoreIdGM());
+                        storeDiffOutputList.add(ar.getAddress() + " | " + ar.getStoreIdGM());
+                        if ( addressLoggingFlag ) {
+                          LOGGER.info("[getStoreIdFromMSA] address = " + ar.getAddress() + " failed store id does not match" );
+                        }
+
                     } else {
                         // do nothing  - it matches
                         matchCnt++;
