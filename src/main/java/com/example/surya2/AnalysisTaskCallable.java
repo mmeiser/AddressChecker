@@ -1,28 +1,35 @@
 package com.example.surya2;
 
 import com.papajohns.online.gis.*;
-import org.apache.log4j.Logger;
 import org.springframework.web.client.RestTemplate;
-
 import java.util.concurrent.Callable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by Surya_Bera on 2/6/2018.
  */
 public class AnalysisTaskCallable implements Callable<AnalysisResult> {
-    //private static final Logger LOGGER = Logger.getLogger(MapTestWithGISMSA.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AnalysisTaskCallable.class);
 
     private String address;
     private GeocodeService geocodeServiceMQ;
     private SearchService searchServiceMQ;
     private RestTemplate restTemplate;
+    private String authString;
+    private String mappingUrl;
+    private boolean addressLoggingFlag;
 
 
-    AnalysisTaskCallable(String address, GeocodeService geocodeServiceMQ, SearchService searchServiceMQ, RestTemplate restTemplate) {
+    AnalysisTaskCallable(String address, GeocodeService geocodeServiceMQ, SearchService searchServiceMQ,
+                         RestTemplate restTemplate, String authString , String mappingUrl, boolean addressLoggingFlag) {
         this.address = address;
         this.geocodeServiceMQ = geocodeServiceMQ;
         this.searchServiceMQ = searchServiceMQ;
         this.restTemplate = restTemplate;
+        this.authString = authString;
+        this.mappingUrl = mappingUrl;
+        this.addressLoggingFlag = addressLoggingFlag;
     }
 
     public AnalysisResult call() throws Exception {
@@ -59,7 +66,7 @@ public class AnalysisTaskCallable implements Callable<AnalysisResult> {
 
         //Call Google's MSA webbff getStoreDetails
         try {
-            StoreSearchResponseForMapping msaResponse = WebBffService.getStoreIdFromMSA(address, restTemplate);
+            StoreSearchResponseForMapping msaResponse = WebBffService.getStoreIdFromMSA(address, restTemplate, authString, mappingUrl, addressLoggingFlag);
             if (msaResponse.getCustomerAddress() != null && msaResponse.getCustomerAddress().getGeocodedAddress() != null && msaResponse.getCustomerAddress().getGeocodedAddress().getLatLng() != null) {
                 if (msaResponse.getCustomerAddress().getGeocodedAddress().getLatLng().getLatitude() != 0 && msaResponse.getCustomerAddress().getGeocodedAddress().getLatLng().getLongitude() != 0) {
                     latLngGM = new Double(msaResponse.getCustomerAddress().getGeocodedAddress().getLatLng().getLatitude()).toString() + new Double(msaResponse.getCustomerAddress().getGeocodedAddress().getLatLng().getLongitude()).toString();

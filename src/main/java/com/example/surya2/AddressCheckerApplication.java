@@ -4,11 +4,13 @@ import com.papajohns.online.gis.GISFactory;
 import com.papajohns.online.gis.GeocodeService;
 import com.papajohns.online.gis.SearchService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestOperations;
 import org.springframework.web.client.RestTemplate;
@@ -27,6 +29,7 @@ import static com.example.surya2.Utils.createStoreListCsv;
   takes about 5 minites in dev to process 2750 addresses with 10 threads
  */
 @SpringBootApplication
+@PropertySource("classpath:application.properties")
 public class AddressCheckerApplication {
 	private static Logger LOGGER = LoggerFactory.getLogger(AddressCheckerApplication.class);
 	String inputFile = "C:\\util\\myNotes\\googleMaps\\addr2.csv";
@@ -36,7 +39,6 @@ public class AddressCheckerApplication {
     GeocodeService geocodeServiceMQ =  myGISFactory.getGeocodeService();
     SearchService searchServiceMQ = myGISFactory.getSearchService();
     RestTemplate restTemplate = new RestTemplate();
-    final int THREAD_COUNT = 10;
 
 
 
@@ -49,8 +51,20 @@ public class AddressCheckerApplication {
 			return builder.build();
 		}
 
-		@Autowired
-		RestOperations restOperations;
+    @Autowired
+    RestOperations restOperations;
+
+    @Value( "${thread.count}" )
+    public String THREAD_COUNT;
+
+    @Value ( "${auth.string}" )
+    public String AUTH_STRING;
+
+    @Value ( "${mapping.url}" )
+    public String MAPPING_URL;
+
+    @Value ( "${addr.logging.value}" )
+    public String ADDRESS_LOGGING_VALUE;
 
 	@Bean
 	public CommandLineRunner run(RestTemplate thisRestTemplate) throws Exception {
@@ -88,23 +102,26 @@ public class AddressCheckerApplication {
             //          24                  = territory id     ( google only)
             //         1093                 = store_id in database    */
 
-			
+
 
 			// read input file and loop thru it
             int matchCnt=0;
             Date startDate = new Date();
-            LOGGER.error("Start Time " + startDate);
+            LOGGER.info("Start Time " + startDate);
 			List<String> addressList = Utils.getAddressList(inputFile);
 			List<String> storeDiffOutputList = new ArrayList<String>();
 			List<String> googleNotFoundOutputList = new ArrayList<String>();
-            ExecutorService executor = Executors.newFixedThreadPool(THREAD_COUNT);
+			int threadCount = Utils.getMyPropertyAsInt(THREAD_COUNT);
+            ExecutorService executor = Executors.newFixedThreadPool(threadCount);
             ((SimpleClientHttpRequestFactory) restTemplate.getRequestFactory()).setReadTimeout(20000);
             ((SimpleClientHttpRequestFactory) restTemplate.getRequestFactory()).setConnectTimeout(20000);
             List<Future<AnalysisResult>> futureList = new ArrayList<Future<AnalysisResult>>();
+            boolean addressLoggingFlag = Utils.getMyPropertyAsBoolean(ADDRESS_LOGGING_VALUE.trim());
 
 
             for (String address : addressList) {
-                  AnalysisTaskCallable testCallable = new AnalysisTaskCallable(address, geocodeServiceMQ, searchServiceMQ, restTemplate);
+                  AnalysisTaskCallable testCallable = new AnalysisTaskCallable(address, geocodeServiceMQ, searchServiceMQ,
+                                                       restTemplate, AUTH_STRING.trim(), MAPPING_URL.trim(),addressLoggingFlag);
                   Future<AnalysisResult> future = executor.submit(testCallable);
                   futureList.add(future);
               }
@@ -132,7 +149,7 @@ public class AddressCheckerApplication {
 
             // time
             Date endDate = new Date();
-            LOGGER.error("End Time " + endDate);
+            LOGGER.info("End Time " + endDate);
 
 		};
 	}

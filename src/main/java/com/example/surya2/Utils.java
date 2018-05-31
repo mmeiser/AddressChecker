@@ -7,27 +7,18 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-
-
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
-
-import java.io.BufferedWriter;
-import java.io.FileReader;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 /**
  * Created by Surya_Bera on 1/29/2018.
  */
 public class Utils {
     private static final String[] FILE_HEADER_MAPPING = {"Address"};
+    private static Logger LOGGER = LoggerFactory.getLogger(Utils.class);
 
 
     public static List<String> getAddressList(String fileName) throws Exception {
@@ -94,6 +85,32 @@ public class Utils {
                csvPrinter.printRecord(str);
            }
            csvPrinter.flush();
-       }
+    }
+
+    public static int getMyPropertyAsInt(String value) {
+        Long tmp = new Long(-1);
+        try {
+            tmp = new Long(value);
+        }  catch  ( Exception e ) {
+            LOGGER.error("could not convert property to int " + value);
+        }
+
+        return tmp.intValue();
+    }
+
+    public static boolean getMyPropertyAsBoolean(String value) {
+            boolean retVal = false;
+            try {
+                Long tmp = new Long(value);
+                if ( tmp.intValue() == 1) {
+                    retVal = true;
+                }
+            }  catch  ( Exception e ) {
+                LOGGER.error("could not convert property to boolean " + value);
+            }
+
+            return retVal;
+
+        }
 }
 

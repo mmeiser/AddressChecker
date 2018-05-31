@@ -15,13 +15,11 @@ import org.slf4j.LoggerFactory;
 public class WebBffService {
 
     private static Logger LOGGER = LoggerFactory.getLogger(AddressCheckerApplication.class);
-    final static String authString = "online" + ":" + "c1529e56-0b47-4ca2-bf4c-5b5ebac0164f";                 // dev1
-    final static String mappingUrl = "https://mapping-dev1.papajohns.com/webbff/api/v2/getStoreDetails";      // dev1
-    //final static String prod_authString = "online" + ":" + "dontsaveprodautcode";
-    //final static String prod_mappingUrl = "https://mapping.papajohns.com/webbff/api/v2/getStoreDetails";
 
 
-    public static StoreSearchResponseForMapping getStoreIdFromMSA(String address, RestTemplate restTemplate) throws Exception {
+    public static StoreSearchResponseForMapping getStoreIdFromMSA(String address, RestTemplate restTemplate,
+                                                String authString, String mappingUrl,
+                                                boolean isAddressLoggingOn ) throws Exception {
         String[] addressArray = address.split("\\|");
         String street = addressArray[0];
         String postal = addressArray[1];
@@ -60,7 +58,9 @@ public class WebBffService {
         ResponseEntity<StoreSearchResponseForMapping> response = restTemplate.postForEntity(mappingUrl, entity, StoreSearchResponseForMapping.class);
         resp = response.getBody();
         resp.getCustomerAddress().getAddress().setDeliveryStoreId(storeId);
-        LOGGER.info("[getStoreIdFromMSA] address = "  + address + " quality_code = " + response.getBody().getCustomerAddress().getQualityCode() + " response = " + response.getStatusCode());
+        if ( isAddressLoggingOn ) {
+            LOGGER.info("[getStoreIdFromMSA] address = " + address + " quality_code = " + response.getBody().getCustomerAddress().getQualityCode() + " response = " + response.getStatusCode());
+        }
 
         return resp;
     }
