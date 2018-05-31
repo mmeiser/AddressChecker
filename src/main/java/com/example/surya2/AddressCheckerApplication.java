@@ -26,15 +26,15 @@ import static com.example.surya2.Utils.createStoreListCsv;
 
 /*
   takes about 42 minutes in dev single threaded to process about 2750 addresses
-  takes about 5 minites in dev to process 2750 addresses with 10 threads
+  takes about 8 minites in dev to process 6000 addresses with 10 threads
  */
 @SpringBootApplication
 @PropertySource("classpath:application.properties")
 public class AddressCheckerApplication {
 	private static Logger LOGGER = LoggerFactory.getLogger(AddressCheckerApplication.class);
-	String inputFile = "C:\\util\\myNotes\\googleMaps\\addr2.csv";
-    String outputFile = "C:\\util\\myNotes\\googleMaps\\storeDiff.csv";
-    String outputFile2 = "C:\\util\\myNotes\\googleMaps\\googleNotFound.csv";
+	//String inputFile = "C:\\util\\myNotes\\googleMaps\\addr2.csv";
+    //String outputFile = "C:\\util\\myNotes\\googleMaps\\storeDiff.csv";
+    //String outputFile2 = "C:\\util\\myNotes\\googleMaps\\googleNotFound.csv";
     GISFactory myGISFactory = GISFactory.getInstance();
     GeocodeService geocodeServiceMQ =  myGISFactory.getGeocodeService();
     SearchService searchServiceMQ = myGISFactory.getSearchService();
@@ -65,6 +65,16 @@ public class AddressCheckerApplication {
 
     @Value ( "${addr.logging.value}" )
     public String ADDRESS_LOGGING_VALUE;
+
+    @Value ( "${input.file}" )
+    public String INPUT_FILE;
+
+    @Value ( "${storediff.output.file}" )
+    public String STOREDIFF_OUTPUT_FILE;
+
+    @Value ( "${notfound.output.file}" )
+    public String NOTFOUND_OUTPUT_FILE;
+
 
 	@Bean
 	public CommandLineRunner run(RestTemplate thisRestTemplate) throws Exception {
@@ -108,7 +118,7 @@ public class AddressCheckerApplication {
             int matchCnt=0;
             Date startDate = new Date();
             LOGGER.info("Start Time " + startDate);
-			List<String> addressList = Utils.getAddressList(inputFile);
+			List<String> addressList = Utils.getAddressList(INPUT_FILE.trim());
 			List<String> storeDiffOutputList = new ArrayList<String>();
 			List<String> googleNotFoundOutputList = new ArrayList<String>();
 			int threadCount = Utils.getMyPropertyAsInt(THREAD_COUNT);
@@ -140,9 +150,9 @@ public class AddressCheckerApplication {
 
 			
 
-            // this writes list of storeIds  that don't match or didn't geocode to output file
-            createStoreListCsv( storeDiffOutputList , outputFile);
-			createStoreListCsv( googleNotFoundOutputList, outputFile2 );
+            // this outputs addresses that don't match stores or didn't geocode to output file
+            createStoreListCsv( storeDiffOutputList , STOREDIFF_OUTPUT_FILE.trim());
+			createStoreListCsv( googleNotFoundOutputList, NOTFOUND_OUTPUT_FILE.trim() );
 
 			// shut it down at it's convenience
             executor.shutdown();

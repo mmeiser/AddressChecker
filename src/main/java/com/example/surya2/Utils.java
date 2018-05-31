@@ -78,7 +78,8 @@ public class Utils {
 
     public static void createStoreListCsv(List<String> storeList, String outputFile ) throws Exception {
            BufferedWriter writer = Files.newBufferedWriter(Paths.get(outputFile));
-           CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader("StoreId" ));
+           String header = "Addr|Zip|Country|City|Territory|StoreId|Result_Message";
+           CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader(header ));
 
 
            for (String str : storeList) {
