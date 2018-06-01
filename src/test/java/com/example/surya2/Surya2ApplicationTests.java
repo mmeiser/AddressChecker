@@ -62,24 +62,6 @@ public class Surya2ApplicationTests {
 	        assertTrue(results[0] != null);
 	    }
 
-	    @Test
-	     public void reverseGeocodeTest() {
-	        // why is this one failing ?  it works if you do this in a browser !!!
-	        //https://maps.googleapis.com/maps/api/geocode/json?latlng=40.714224,-73.961452&key=YOUR_API_KEY
-	        String newuri = "https://maps.googleapis.com/maps/api/geocode/json?latlng=40.714224,-73.961452&key=" + myApiKey;
-	        boolean testPassed = true;
-
-	        try {
-	            GeocodingResult[] results = doGeocode(newuri);
-	            Gson gson = new GsonBuilder().setPrettyPrinting().create();
-	            System.out.println(gson.toJson(results[0].addressComponents));
-	        } catch ( Exception e) {
-	            testPassed = false;
-	        }
-	        assert(testPassed);
-
-	    }
-
 
 	    public GeocodingResult[]  doGeocode(String uri) {
 	        GeoApiContext context = new GeoApiContext.Builder().apiKey(myApiKey).build();
@@ -112,7 +94,7 @@ public class Surya2ApplicationTests {
 
 
 	    @Test
-	     public void reversGeocodeTest2 () {
+	     public void reversGeocodeTest () {
 	        // this works
 	        double lat = 40.714224;
 	        double lng = -73.961452 ;
