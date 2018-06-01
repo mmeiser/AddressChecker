@@ -63,8 +63,6 @@ public class AddressCheckerApplication {
     @Value ( "${mapping.url}" )
     public String MAPPING_URL;
 
-    @Value ( "${addr.logging.value}" )
-    public String ADDRESS_LOGGING_VALUE;
 
     @Value ( "${input.file}" )
     public String INPUT_FILE;
@@ -74,6 +72,7 @@ public class AddressCheckerApplication {
 
     @Value ( "${notfound.output.file}" )
     public String NOTFOUND_OUTPUT_FILE;
+
 
 
 	@Bean
@@ -126,12 +125,11 @@ public class AddressCheckerApplication {
             ((SimpleClientHttpRequestFactory) restTemplate.getRequestFactory()).setReadTimeout(20000);
             ((SimpleClientHttpRequestFactory) restTemplate.getRequestFactory()).setConnectTimeout(20000);
             List<Future<AnalysisResult>> futureList = new ArrayList<Future<AnalysisResult>>();
-            boolean addressLoggingFlag = Utils.getMyPropertyAsBoolean(ADDRESS_LOGGING_VALUE.trim());
 
 
             for (String address : addressList) {
                   AnalysisTaskCallable testCallable = new AnalysisTaskCallable(address, geocodeServiceMQ, searchServiceMQ,
-                                                       restTemplate, AUTH_STRING.trim(), MAPPING_URL.trim(),addressLoggingFlag);
+                                                       restTemplate, AUTH_STRING.trim(), MAPPING_URL.trim());
                   Future<AnalysisResult> future = executor.submit(testCallable);
                   futureList.add(future);
               }
@@ -142,9 +140,7 @@ public class AddressCheckerApplication {
                         googleNotFoundOutputList.add(ar.getAddress() + " | not found in Google" );
                     } else if (  !ar.getInputStoreId().equalsIgnoreCase(ar.getStoreIdGM() ) ) {
                         storeDiffOutputList.add(ar.getAddress() + " | " + ar.getStoreIdGM());
-                        if ( addressLoggingFlag ) {
-                          LOGGER.info("[getStoreIdFromMSA] address = " + ar.getAddress() + " failed store id does not match" );
-                        }
+                        LOGGER.info("[getStoreIdFromMSA] address = " + ar.getAddress() + " failed store id does not match" );
 
                     } else {
                         // do nothing  - it matches
@@ -152,7 +148,7 @@ public class AddressCheckerApplication {
                     }
               }
 
-			
+
 
             // this outputs addresses that don't match stores or didn't geocode to output file
             createStoreListCsv( storeDiffOutputList , STOREDIFF_OUTPUT_FILE.trim());
@@ -167,4 +163,5 @@ public class AddressCheckerApplication {
 
 		};
 	}
+
 }

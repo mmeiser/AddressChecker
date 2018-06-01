@@ -18,8 +18,7 @@ public class WebBffService {
 
 
     public static StoreSearchResponseForMapping getStoreIdFromMSA(String address, RestTemplate restTemplate,
-                                                String authString, String mappingUrl,
-                                                boolean isAddressLoggingOn ) throws Exception {
+                                                String authString, String mappingUrl) throws Exception {
         String[] addressArray = address.split("\\|");
         String street = addressArray[0];
         String postal = addressArray[1];
@@ -58,9 +57,7 @@ public class WebBffService {
         StoreSearchResponseForMapping resp = null;
         resp = response.getBody();
         resp.getCustomerAddress().getAddress().setDeliveryStoreId(storeId);
-        if ( isAddressLoggingOn ) {
-            LOGGER.info("[getStoreIdFromMSA] address = " + address + " quality_code = " + response.getBody().getCustomerAddress().getQualityCode() + " response = " + response.getStatusCode());
-        }
+        LOGGER.info("[getStoreIdFromMSA] address = " + address + " quality_code = " + response.getBody().getCustomerAddress().getQualityCode() + " response = " + response.getStatusCode());
 
         return resp;
     }

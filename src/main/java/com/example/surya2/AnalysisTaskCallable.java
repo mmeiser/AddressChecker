@@ -18,18 +18,16 @@ public class AnalysisTaskCallable implements Callable<AnalysisResult> {
     private RestTemplate restTemplate;
     private String authString;
     private String mappingUrl;
-    private boolean addressLoggingFlag;
 
 
     AnalysisTaskCallable(String address, GeocodeService geocodeServiceMQ, SearchService searchServiceMQ,
-                         RestTemplate restTemplate, String authString , String mappingUrl, boolean addressLoggingFlag) {
+                         RestTemplate restTemplate, String authString , String mappingUrl) {
         this.address = address;
         this.geocodeServiceMQ = geocodeServiceMQ;
         this.searchServiceMQ = searchServiceMQ;
         this.restTemplate = restTemplate;
         this.authString = authString;
         this.mappingUrl = mappingUrl;
-        this.addressLoggingFlag = addressLoggingFlag;
     }
 
     public AnalysisResult call() throws Exception {
@@ -66,7 +64,7 @@ public class AnalysisTaskCallable implements Callable<AnalysisResult> {
 
         //Call Google's MSA webbff getStoreDetails
         try {
-            StoreSearchResponseForMapping msaResponse = WebBffService.getStoreIdFromMSA(address, restTemplate, authString, mappingUrl, addressLoggingFlag);
+            StoreSearchResponseForMapping msaResponse = WebBffService.getStoreIdFromMSA(address, restTemplate, authString, mappingUrl);
             if (msaResponse.getCustomerAddress() != null && msaResponse.getCustomerAddress().getGeocodedAddress() != null && msaResponse.getCustomerAddress().getGeocodedAddress().getLatLng() != null) {
                 if (msaResponse.getCustomerAddress().getGeocodedAddress().getLatLng().getLatitude() != 0 && msaResponse.getCustomerAddress().getGeocodedAddress().getLatLng().getLongitude() != 0) {
                     latLngGM = new Double(msaResponse.getCustomerAddress().getGeocodedAddress().getLatLng().getLatitude()).toString() + new Double(msaResponse.getCustomerAddress().getGeocodedAddress().getLatLng().getLongitude()).toString();
@@ -86,9 +84,7 @@ public class AnalysisTaskCallable implements Callable<AnalysisResult> {
         } catch (Exception ex) {
             storeIdFromMSA = "Error";
             latLngGM = "Error";
-            if ( addressLoggingFlag ) {
-                LOGGER.info("[getStoreIdFromMSA] address = " + address + " failed - Not found in GM" );
-            }
+            LOGGER.info("[getStoreIdFromMSA] address = " + address + " failed - Not found in GM" );
 
         }
         analysisResult.setAddress(address);
