@@ -6,6 +6,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONObject;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -36,8 +37,8 @@ public class Surya2ApplicationTests {
 	     final String myApiKey = "AIzaSyDm-OyrYBr-u7WsnXjk4FoFdckq-gqkqY0";
 
 
-
-    @org.testng.annotations.Test(enabled = false)
+	@Ignore("Test is ignored as a demonstration")
+    @Test
 	        public void simpleGeocodeTest() {
 	            String newuri = "https://maps.googleapis.com/maps/api/geocode/json?address=2002+Papa Johns+Blvd+Louisville,+KY";
 	            GeocodingResult[] results = doGeocode(newuri);
@@ -49,7 +50,8 @@ public class Surya2ApplicationTests {
 	            assertTrue(results[0] != null);
 	        }
 
-    @org.testng.annotations.Test(enabled = false)
+	@Ignore("Test is ignored as a demonstration")
+    @Test
     public void geocodeBoundaryTest() {
 	        String newuri = "https://maps.googleapis.com/maps/api/geocode/json?address=Winnetka@key=" + myApiKey;
 	        //https:maps.googleapis.com/maps/api/geocode/json?address=Winnetka&key=YOUR_API_KEY
@@ -93,7 +95,8 @@ public class Surya2ApplicationTests {
 	     }
 
 
-    @org.testng.annotations.Test(enabled = false)
+	@Ignore("Test is ignored as a demonstration")
+    @Test
 	     public void reversGeocodeTest () {
 	        // this works
 	        double lat = 40.714224;
@@ -150,7 +153,8 @@ public class Surya2ApplicationTests {
 	          assert(testPassed);
 	    }
 
-    @org.testng.annotations.Test(enabled = false)
+	@Ignore("Test is ignored as a demonstration")
+    @Test
 	    public void reverseGeocodeTest3() {
 	        boolean testPassed = true;
 	        Double latitude  = 40.714224;
