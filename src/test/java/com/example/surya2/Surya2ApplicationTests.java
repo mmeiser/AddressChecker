@@ -37,7 +37,7 @@ public class Surya2ApplicationTests {
 
 
 
-	        @Test
+    @org.testng.annotations.Test(enabled = false)
 	        public void simpleGeocodeTest() {
 	            String newuri = "https://maps.googleapis.com/maps/api/geocode/json?address=2002+Papa Johns+Blvd+Louisville,+KY";
 	            GeocodingResult[] results = doGeocode(newuri);
@@ -49,8 +49,8 @@ public class Surya2ApplicationTests {
 	            assertTrue(results[0] != null);
 	        }
 
-	    @Test
-	    public void geocodeBoundaryTest() {
+    @org.testng.annotations.Test(enabled = false)
+    public void geocodeBoundaryTest() {
 	        String newuri = "https://maps.googleapis.com/maps/api/geocode/json?address=Winnetka@key=" + myApiKey;
 	        //https:maps.googleapis.com/maps/api/geocode/json?address=Winnetka&key=YOUR_API_KEY
 	        GeocodingResult[] results = doGeocode(newuri);
@@ -93,7 +93,7 @@ public class Surya2ApplicationTests {
 	     }
 
 
-	    @Test
+    @org.testng.annotations.Test(enabled = false)
 	     public void reversGeocodeTest () {
 	        // this works
 	        double lat = 40.714224;
@@ -150,7 +150,7 @@ public class Surya2ApplicationTests {
 	          assert(testPassed);
 	    }
 
-	    @Test
+    @org.testng.annotations.Test(enabled = false)
 	    public void reverseGeocodeTest3() {
 	        boolean testPassed = true;
 	        Double latitude  = 40.714224;
