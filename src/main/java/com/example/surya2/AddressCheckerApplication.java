@@ -27,6 +27,7 @@ import static com.example.surya2.Utils.createStoreListCsv;
 /*
   takes about 42 minutes in dev single threaded to process about 2750 addresses
   takes about 8 minites in dev to process 6000 addresses with 10 threads
+  takes about 90 minites in dev to process 131,141 addresses with 20 threads
  */
 @SpringBootApplication
 @PropertySource("classpath:application.properties")
@@ -87,6 +88,16 @@ public class AddressCheckerApplication {
             and ((store_id in ( 3615, 55 ))  or  (postal_code in (  '65301' , '40475') ))
             and trunc(business_date)  > '01-Mar-2018'
             and location_type_id in ( 1,2)
+
+            or this query         for 6/11/2-18
+            from pjus.order_header
+           where order_type_code = 'D'
+           and ((store_id in ( 928,930,933,934,935,938,941,1015,1062,1127,1128,1296,1314,1940,3422,3645,3688,4151,4490,4491,4601,4625,4689,4750,4857 , 10649))
+           or  (city in (  'AUSTIN' , 'Austin',  'GEORGETOWN', 'Pflugerville', 'CEDAR PARK', 'Hutto', 'Buda', 'Lakeway', 'Round Rock', 'LEANDER', 'KYLE', 'Charlottetown') AND state in ( 'TX', 'PE' )
+           ))
+           and trunc(business_date)  > '13-Mar-2018'
+           and location_type_id in ( 1,2)
+
 
 
 
